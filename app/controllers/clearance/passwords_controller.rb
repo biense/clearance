@@ -19,13 +19,16 @@ class Clearance::PasswordsController < Clearance::BaseController
     before_filter :ensure_existing_user, only: [:edit, :update]
   end
 
-  def create
-    if user = find_user_for_create
-      user.forgot_password!
-      deliver_email(user)
-    end
-    render template: 'passwords/create'
-  end
+ def create
+   if user = find_user_for_create
+     user.forgot_password!
+     deliver_email(user)
+     render template: 'passwords/create'
+   else
+     flash[:notice] = "This email does not exist!"
+     render template: 'passwords/new'
+   end
+ end
 
   def edit
     @user = find_user_for_edit
